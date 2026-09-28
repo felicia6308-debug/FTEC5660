@@ -49,5 +49,35 @@ homework runner.
 
 
 ## Homework 1 solution: 
-> to students: please fill your solution description here.
 
+### Chain Design
+
+```mermaid
+flowchart TD
+    A[Receipt Images] --> B[Convert Images to Data URLs]
+    B --> C[Batch Processing]
+    C --> D[RunnableParallel]
+
+    D --> E[Q1: Final Payment Chain]
+    D --> F[Q2: No-Discount Chain]
+
+    E --> G[Identify Receipt Sections]
+    G --> H[Extract Final Payment]
+    H --> I[Reflection and Verification]
+
+    F --> J[Identify Receipt Sections]
+    J --> K[Calculate Amount Before Discounts]
+    K --> L[Reflection and Verification]
+
+    I --> M[Final Payment per Receipt]
+    L --> N[No-Discount Amount per Receipt]
+
+    M --> O[Sum Across All Receipts]
+    N --> O
+
+    O --> P[Final Q1 and Q2 Responses]
+```
+
+### Solution Description
+
+I implemented the receipt-processing chain using LangChain and the vision-capable `deepseek-v4-flash-vision-exp` model. For each receipt, two independent tasks are executed in parallel using `RunnableParallel`: one extracts the final payment for Query 1, while the other calculates the amount before discounts for Query 2. Each chain first identifies the transaction and summary/payment sections based on the visual layout and function of the receipt lines rather than relying only on fixed labels. For Query 1, the chain extracts the actual final payment and accounts for rounding when present. For Query 2, it uses the subtotal and adds back discount, promotion, or coupon amounts without adding back rounding. Both chains include fallback strategies when explicit totals are unavailable and a reflection step that independently recalculates the amount to verify the result and rereads the receipt if the values are inconsistent. Finally, all receipts are processed in batch, and the extracted amounts are summed using `Decimal` to produce the two final HKD responses.
