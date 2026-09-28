@@ -209,11 +209,11 @@ def answer_queries(chain: Any, images: list[Path]) -> dict[str, Any]:
     )
 
     total_payment = sum(
-        Decimal(r["final_payment"]) for r in results
+        parse_single_amount(r["final_payment"]) for r in results
     )
 
     total_no_discount = sum(
-        Decimal(r["no_discount"]) for r in results
+        parse_single_amount(r["no_discount"]) for r in results
     )
 
     return {
